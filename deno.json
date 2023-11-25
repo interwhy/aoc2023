@@ -1,0 +1,9 @@
+{
+  "imports": {
+    "std/": "https://deno.land/std@0.207.0/"
+  },
+  "tasks": {
+    "run": "deno run -A index.ts",
+    "bench": "deno bench -A bench.ts"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "version": "3",
+  "remote": {
+    "https://deno.land/std@0.207.0/streams/to_text.ts": "4018b5f7a0e7ab28d6957c239e401f8b534ef326b7ebd282ca76b3cd55380aab"
+  }
+}
