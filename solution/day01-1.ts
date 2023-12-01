@@ -11,7 +11,7 @@ function getCalibrationValue(s: string): number {
   return Number.parseInt(digits[0] + digits[digits.length - 1]);
 }
 
-export default function day01(input: string): string {
+export default function day01_1(input: string): string {
   return input.split("\n").map(getCalibrationValue).filter((n) => !isNaN(n))
     .reduce((prev, current, _i, _array) => prev + current, 0).toString();
 }
@@ -23,5 +23,5 @@ Deno.test("getCalibrationValue", () => {
 });
 
 Deno.test("day01", () => {
-  assertEquals("36", day01("a1b2asdf\n1\nysfh111113"));
+  assertEquals("36", day01_1("a1b2asdf\n1\nysfh111113"));
 });
