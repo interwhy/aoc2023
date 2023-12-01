@@ -1,23 +1,28 @@
-const days = ["01"];
+import day01 from "./solution/day01.ts";
+
+const days = ["control", "01"];
 
 for (const day of days) {
-  const command = new Deno.Command("deno", {
-    args: ["run", "--allow-read", `./solution/day${day}.ts`],
-    stdin: "piped",
-    stdout: "null",
-    stderr: "null",
-  });
+  let run: (s: string) => string = function (_s: string) {
+    return "";
+  };
 
-  const input = Deno.readFileSync(`./input/day${day}.txt`);
+  switch (day) {
+    case "control":
+      break;
+    case "01":
+      run = day01;
+      break;
+    default:
+      console.log("I don't think I've done that one yet");
+      Deno.exit(1);
+  }
 
-  Deno.bench(`day${day}`, async (b) => {
-    const child = command.spawn();
-    b.start();
-    const writer = child.stdin.getWriter();
-    await writer.write(input);
-    writer.releaseLock();
-    await child.stdin.close();
-    await child.status;
-    b.end();
+  const input = day == "control"
+    ? ""
+    : Deno.readTextFileSync(`./input/day${day}.txt`);
+
+  Deno.bench(day, () => {
+    run(input);
   });
 }
