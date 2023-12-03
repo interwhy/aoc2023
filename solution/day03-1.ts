@@ -40,35 +40,38 @@ function collectPartNumbers(grid: string[]): number[] {
   const results: number[] = [];
   const width = grid[0].length;
   const height = grid.length;
-  for (let y = 0; y < height; ++y) {
-    let parsingNumber = false;
-    let number = 0;
-    let isPartNumber = false;
-    for (let x = 0; x < width; ++x) {
-      const c = getAt(grid, x, y);
-      if (parsingNumber) {
-        if (isDigit(c)) {
-          number = number * 10 + Number.parseInt(c);
-          isPartNumber = isPartNumber || adjacentToSymbol(grid, x, y);
-        } else {
-          if (isPartNumber) {
-            results.push(number);
-          }
-          parsingNumber = false;
-          number = 0;
-          isPartNumber = false;
-        }
-      } else if (isDigit(c)) {
-        parsingNumber = true;
-        number = Number.parseInt(c);
-        isPartNumber = adjacentToSymbol(grid, x, y);
-      }
-    }
 
-    if (parsingNumber && isPartNumber) {
+  let isParsingNumber = false;
+  let isPartNumber = false;
+  let number = 0;
+
+  function resetState() {
+    if (isPartNumber) {
       results.push(number);
     }
+    isParsingNumber = false;
+    isPartNumber = false;
+    number = 0;
   }
+
+  function parseDigit(c: string, x: number, y: number) {
+    isParsingNumber = true;
+    isPartNumber = isPartNumber || adjacentToSymbol(grid, x, y);
+    number = number * 10 + Number.parseInt(c);
+  }
+
+  for (let y = 0; y < height; ++y) {
+    for (let x = 0; x < width; ++x) {
+      const c = getAt(grid, x, y);
+      if (isDigit(c)) {
+        parseDigit(c, x, y);
+      } else if (isParsingNumber) {
+        resetState();
+      }
+    }
+    resetState();
+  }
+
   return results;
 }
 

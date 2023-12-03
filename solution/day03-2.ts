@@ -43,44 +43,43 @@ function adjacentGears(
   });
 }
 
-// This is gross, if I feel like it I'll clean it up later :)
 function collectGearRatios(grid: string[]): number[] {
   const width = grid[0].length;
   const height = grid.length;
   const gearLabels: Record<GearKey, number[]> = {};
-  for (let y = 0; y < height; ++y) {
-    let parsingNumber = false;
-    let number = 0;
-    let gears: Set<GearKey> = new Set();
-    for (let x = 0; x < width; ++x) {
-      const c = getAt(grid, x, y);
-      if (parsingNumber) {
-        if (isDigit(c)) {
-          number = number * 10 + Number.parseInt(c);
-          adjacentGears(grid, x, y).forEach((gear) =>
-            gears = gears.add(getGearKey(gear))
-          );
-        } else {
-          for (const key of gears) {
-            const labels = gearLabels[key] || [];
-            gearLabels[key] = labels.concat([number]);
-          }
-          parsingNumber = false;
-          number = 0;
-          gears = new Set();
-        }
-      } else if (isDigit(c)) {
-        parsingNumber = true;
-        number = Number.parseInt(c);
-        adjacentGears(grid, x, y).forEach((gear) =>
-          gears = gears.add(getGearKey(gear))
-        );
-      }
-    }
+
+  let isParsingNumber = false;
+  let gears: Set<GearKey> = new Set();
+  let number = 0;
+
+  function resetState() {
     for (const key of gears) {
       const labels = gearLabels[key] || [];
       gearLabels[key] = labels.concat([number]);
     }
+    isParsingNumber = false;
+    gears = new Set();
+    number = 0;
+  }
+
+  function parseDigit(c: string, x: number, y: number) {
+    isParsingNumber = true;
+    number = number * 10 + Number.parseInt(c);
+    adjacentGears(grid, x, y).forEach((gear) =>
+      gears = gears.add(getGearKey(gear))
+    );
+  }
+
+  for (let y = 0; y < height; ++y) {
+    for (let x = 0; x < width; ++x) {
+      const c = getAt(grid, x, y);
+      if (isDigit(c)) {
+        parseDigit(c, x, y);
+      } else if (isParsingNumber) {
+        resetState();
+      }
+    }
+    resetState();
   }
 
   const results: number[] = [];
