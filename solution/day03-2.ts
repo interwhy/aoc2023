@@ -4,7 +4,7 @@ function isDigit(c: string): boolean {
   return /^\d$/.test(c);
 }
 
-const adjacency = [
+const adjacency: Gear[] = [
   [1, 0],
   [1, 1],
   [0, 1],
@@ -19,10 +19,10 @@ function getAt(grid: string[], x: number, y: number): string {
   return grid[y]![x];
 }
 
-type Gear = { x: number; y: number };
+type Gear = [number, number];
 type GearKey = string;
 function getGearKey(gear: Gear): GearKey {
-  return `${gear.x},${gear.y}`;
+  return `${gear[0]},${gear[1]}`;
 }
 
 function adjacentGears(
@@ -32,15 +32,9 @@ function adjacentGears(
 ): Gear[] {
   const width = grid[0].length;
   const height = grid.length;
-  return adjacency.flatMap((coords) => {
-    const [dx, dy] = coords;
-    const x = x0 + dx;
-    const y = y0 + dy;
-    if (x < 0 || x >= width) return [];
-    if (y < 0 || y >= height) return [];
-    if (getAt(grid, x, y) == "*") return [{ x, y }];
-    return [];
-  });
+  return adjacency.map(([dx, dy]) => [x0 + dx, y0 + dy]).filter(([x, y]) =>
+    x >= 0 && x < width && y >= 0 && y < height && getAt(grid, x, y) === "*"
+  ) as Gear[];
 }
 
 function collectGearRatios(grid: string[]): number[] {
