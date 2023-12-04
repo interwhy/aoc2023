@@ -1,6 +1,15 @@
 import { getSolution } from "./runner.ts";
 
-const solutionNames = ["01-1", "01-2", "02-1", "02-2", "03-1", "03-2", "04-1"];
+const solutionNames = [
+  "01-1",
+  "01-2",
+  "02-1",
+  "02-2",
+  "03-1",
+  "03-2",
+  "04-1",
+  "04-2",
+];
 
 function control(s: string): string {
   return s;
