@@ -4,6 +4,7 @@
   },
   "tasks": {
     "run": "deno run -A index.ts",
-    "bench": "deno bench -A bench.ts"
+    "bench": "deno bench -A bench.ts",
+    "test": "deno test solution/*"
   }
 }
