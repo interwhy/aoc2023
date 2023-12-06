@@ -10,6 +10,8 @@ const solutionNames = [
   "04-1",
   "04-2",
   "05-1",
+  "06-1",
+  "06-2",
 ];
 
 function control(s: string): string {
