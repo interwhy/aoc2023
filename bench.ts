@@ -16,6 +16,8 @@ const solutionNames = [
   "07-2",
   "08-1",
   "08-2",
+  "09-1",
+  "09-2",
 ];
 
 function control(s: string): string {
