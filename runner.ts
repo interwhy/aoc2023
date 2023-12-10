@@ -16,6 +16,7 @@ import day08_1 from "./solution/day08-1.ts";
 import day08_2 from "./solution/day08-2.ts";
 import day09_1 from "./solution/day09-1.ts";
 import day09_2 from "./solution/day09-2.ts";
+import { day10_1, day10_2 } from "./solution/day10.ts";
 
 export interface Solution {
   run: (s: string) => string;
@@ -85,6 +86,12 @@ export function getSolution(name: string): Solution | undefined {
       break;
     case "09-2":
       run = day09_2;
+      break;
+    case "10-1":
+      run = day10_1;
+      break;
+    case "10-2":
+      run = day10_2;
       break;
     default:
       console.log("I don't think I've done that one yet");
