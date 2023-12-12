@@ -51,9 +51,10 @@ class Image {
     return lines.join("\n");
   }
 
-  expand() {
-    const emptyCols: Set<number> = new Set();
-    const emptyRows: Set<number> = new Set();
+  expandAndSumDistances(scale: number) {
+    const amount = scale - 1;
+    const emptyCols: number[] = [];
+    const emptyRows: number[] = [];
 
     for (let y = 0; y < this.height; ++y) {
       let isEmpty = true;
@@ -64,7 +65,7 @@ class Image {
         }
       }
       if (isEmpty) {
-        emptyRows.add(y);
+        emptyRows.push(y);
       }
     }
 
@@ -77,51 +78,27 @@ class Image {
         }
       }
       if (isEmpty) {
-        emptyCols.add(x);
+        emptyCols.push(x);
       }
     }
 
-    console.log(emptyRows);
-    console.log(emptyCols);
-
-    const newGrid: number[][] = [];
-    const newHeight = this.height + emptyCols.size;
-    const newWidth = this.width + emptyRows.size;
-    const newGalaxies: Point[] = [];
-    let yi = 0;
-    for (let y = 0; y < this.height; ++y) {
-      let xi = 0;
-      const xs = [...Array(newWidth).keys()].map(() => Tile.Empty);
-      if (!emptyRows.has(y)) {
-        for (let x = 0; x < this.width; ++x) {
-          if (!emptyCols.has(x)) {
-            if (this.grid[y][x] == Tile.Galaxy) {
-              xs[x + xi] = Tile.Galaxy;
-              newGalaxies.push([x + xi, y + yi]);
-            }
-          } else {
-            xi += 1;
-          }
-        }
-      } else {
-        yi += 1;
-      }
-      newGrid.push(xs);
+    function countBetween(a: number, b: number, values: number[]): number {
+      return values.filter((c) => (a < c && c < b) || (b < c && c < a)).length;
     }
 
-    this.grid = newGrid;
-    this.width = newWidth;
-    this.height = newHeight;
-    this.galaxies = newGalaxies;
-  }
-
-  sumDistances(): number {
     let result = 0;
     for (let i = 0; i < this.galaxies.length; ++i) {
       for (let j = 0; j < this.galaxies.length; ++j) {
         if (i >= j) continue;
 
-        result += distance(this.galaxies[i], this.galaxies[j]);
+        const [x0, y0] = this.galaxies[i];
+        const [x1, y1] = this.galaxies[j];
+        const xx0 = countBetween(-1, x0, emptyCols) * amount;
+        const yy0 = countBetween(-1, y0, emptyRows) * amount;
+        const xx1 = countBetween(-1, x1, emptyCols) * amount;
+        const yy1 = countBetween(-1, y1, emptyRows) * amount;
+
+        result += distance([x0 + xx0, y0 + yy0], [x1 + xx1, y1 + yy1]);
       }
     }
 
@@ -131,9 +108,12 @@ class Image {
 
 export function day11_1(input: string): string {
   const image = new Image(input);
-  image.expand();
-  console.log(image.toString());
-  return image.sumDistances().toString();
+  return image.expandAndSumDistances(2).toString();
+}
+
+export function day11_2(input: string): string {
+  const image = new Image(input);
+  return image.expandAndSumDistances(1000000).toString();
 }
 
 Deno.test("day11-1", () => {
@@ -151,5 +131,38 @@ Deno.test("day11-1", () => {
 #...#.....
 `),
     "374",
+  );
+});
+
+Deno.test("day11-2", () => {
+  assertEquals(
+    new Image(`
+...#......
+.......#..
+#.........
+..........
+......#...
+.#........
+.........#
+..........
+.......#..
+#...#.....
+`).expandAndSumDistances(10).toString(),
+    "1030",
+  );
+  assertEquals(
+    new Image(`
+...#......
+.......#..
+#.........
+..........
+......#...
+.#........
+.........#
+..........
+.......#..
+#...#.....
+`).expandAndSumDistances(100).toString(),
+    "8410",
   );
 });
